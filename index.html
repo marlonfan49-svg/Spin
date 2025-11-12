@@ -3,258 +3,303 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RP Spins</title>
+<title>RP Spins - Firebase</title>
 <style>
-  body { font-family: Arial, sans-serif; padding: 20px; background: #f4f4f4; }
-  .hidden { display: none; }
-  input, select, button { margin: 5px 0; padding: 5px; }
-  .container { background: #fff; padding: 20px; border-radius: 8px; max-width: 600px; margin: auto; }
-  .bordered { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 6px; }
-  .btn { padding: 5px 10px; cursor: pointer; }
-  .btn-admin { background-color: #f44336; color: #fff; }
-  .btn-spin { background-color: #4caf50; color: #fff; }
-  .btn-trade { background-color: #673ab7; color: #fff; }
+body { font-family: Arial; padding: 20px; background: #f4f4f4; }
+.container { background: #fff; padding: 20px; border-radius: 8px; max-width: 600px; margin: auto; }
+.bordered { border: 1px solid #ccc; padding: 10px; margin-bottom: 10px; border-radius: 6px; }
+input, select, button { margin:5px 0; padding:5px; }
+.hidden { display: none; }
+.btn { padding: 5px 10px; cursor: pointer; }
+.btn-admin { background-color: #f44336; color: #fff; }
+.btn-spin { background-color: #4caf50; color: #fff; }
+.btn-trade { background-color: #673ab7; color: #fff; }
 </style>
 </head>
 <body>
 
 <div class="container" id="authContainer">
-  <h2>Connexion / Inscription</h2>
-  <div class="bordered">
-    <h3>Se connecter</h3>
-    <input id="loginUsername" placeholder="Pseudo"><br>
-    <input id="loginPassword" placeholder="Mot de passe" type="password"><br>
-    <button onclick="login()" class="btn">Se connecter</button>
-  </div>
+<h2>Connexion / Inscription</h2>
+<div class="bordered">
+<h3>Se connecter</h3>
+<input id="loginUsername" placeholder="Pseudo"><br>
+<input id="loginPassword" placeholder="Mot de passe" type="password"><br>
+<button onclick="login()" class="btn">Se connecter</button>
+</div>
 
-  <div class="bordered">
-    <h3>Créer un compte</h3>
-    <input id="regUsername" placeholder="Pseudo"><br>
-    <input id="regPassword" placeholder="Mot de passe" type="password"><br>
-    <select id="regElement">
-      <option>Feu</option>
-      <option>Eau</option>
-      <option>Vent</option>
-      <option>Foudre</option>
-      <option>Terre</option>
-      <option>Ombre</option>
-      <option>Lumière</option>
-    </select><br>
-    <label><input type="checkbox" id="isAdmin"> Compte admin</label><br>
-    <input id="adminPassword" placeholder="Mot de passe admin" type="password" class="hidden"><br>
-    <button onclick="register()" class="btn">Créer un compte</button>
-  </div>
+<div class="bordered">
+<h3>Créer un compte</h3>
+<input id="regUsername" placeholder="Pseudo"><br>
+<input id="regPassword" placeholder="Mot de passe" type="password"><br>
+<select id="regElement">
+<option>Feu</option>
+<option>Eau</option>
+<option>Vent</option>
+<option>Foudre</option>
+<option>Terre</option>
+<option>Ombre</option>
+<option>Lumière</option>
+</select><br>
+<label><input type="checkbox" id="isAdmin"> Compte admin</label><br>
+<input id="adminPassword" placeholder="Mot de passe admin" type="password" class="hidden"><br>
+<button onclick="register()" class="btn">Créer un compte</button>
+</div>
 </div>
 
 <div class="container hidden" id="userDashboard">
-  <h2 id="welcome"></h2>
-  <button onclick="logout()">Se déconnecter</button>
+<h2 id="welcome"></h2>
+<button onclick="logout()">Se déconnecter</button>
 
-  <div class="bordered">
-    <h3>Mes Spins</h3>
-    <div id="spinsContainer"></div>
-  </div>
+<div class="bordered">
+<h3>Mes Spins</h3>
+<div id="spinsContainer"></div>
+</div>
 
-  <div class="bordered">
-    <h3>Mes Pierres</h3>
-    <div id="stonesContainer"></div>
-  </div>
+<div class="bordered">
+<h3>Mes Pierres</h3>
+<div id="stonesContainer"></div>
+</div>
 
-  <div class="bordered">
-    <h3>Échanger une pierre</h3>
-    <select id="tradePartner">
-      <option value="">Sélectionner un partenaire</option>
-    </select><br>
-    <select id="tradeStone">
-      <option value="">Sélectionner une pierre</option>
-    </select><br>
-    <button onclick="tradeStoneWith()" class="btn btn-trade">Échanger</button>
-  </div>
+<div class="bordered">
+<h3>Échanger une pierre</h3>
+<select id="tradePartner">
+<option value="">Sélectionner un partenaire</option>
+</select><br>
+<select id="tradeStone">
+<option value="">Sélectionner une pierre</option>
+</select><br>
+<button onclick="tradeStoneWith()" class="btn btn-trade">Échanger</button>
+</div>
 </div>
 
 <div class="container hidden" id="adminDashboard">
-  <h2>Dashboard Admin</h2>
-  <button onclick="logout()">Se déconnecter</button>
-  <div id="playersList"></div>
+<h2>Dashboard Admin</h2>
+<button onclick="logout()">Se déconnecter</button>
+<div id="playersList"></div>
 </div>
 
+<!-- Firebase -->
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+
 <script>
+const firebaseConfig = {
+  apiKey: "VOTRE_API_KEY",
+  authDomain: "VOTRE_AUTH_DOMAIN",
+  databaseURL: "VOTRE_DATABASE_URL",
+  projectId: "VOTRE_PROJECT_ID",
+  storageBucket: "VOTRE_STORAGE_BUCKET",
+  messagingSenderId: "VOTRE_SENDER_ID",
+  appId: "VOTRE_APP_ID"
+};
+
+firebase.initializeApp(firebaseConfig);
+const db = firebase.database();
+
 const ADMIN_PASSWORD = "chadilegrosbg";
 const ELEMENTS = ["Feu","Eau","Vent","Foudre","Terre","Ombre","Lumière"];
 const SPIN_TYPES = ["normal","rare","epic","legendaire","mythique","prismatique"];
 const SPIN_RATES = {normal:0.10,rare:0.20,epic:0.35,legendaire:0.45,mythique:0.80,prismatique:1.0};
 const ECU_REWARDS = {normal:200,rare:500,epic:1000,legendaire:3000,mythique:20000};
 
-let accounts = JSON.parse(localStorage.getItem("accounts")||"{}");
 let currentUser = null;
 
-function saveAccounts(){ localStorage.setItem("accounts", JSON.stringify(accounts)); }
-
-function getRank(level){
-  if(level>=20) return "Maître";
-  if(level>=15) return "Expert";
-  if(level>=10) return "Éveillé";
-  if(level>=5) return "Novice Confirmé";
-  return "Débutant";
-}
-
+// Checkbox admin
 document.getElementById("isAdmin").addEventListener("change",(e)=>{
-  document.getElementById("adminPassword").classList.toggle("hidden", !e.target.checked);
+document.getElementById("adminPassword").classList.toggle("hidden", !e.target.checked);
 });
 
+// --- Fonctions utilitaires ---
+function getRank(level){
+if(level>=20) return "Maître";
+if(level>=15) return "Expert";
+if(level>=10) return "Éveillé";
+if(level>=5) return "Novice Confirmé";
+return "Débutant";
+}
+
+// --- CRUD Firebase ---
 function register(){
-  const username = document.getElementById("regUsername").value.trim();
-  const password = document.getElementById("regPassword").value.trim();
-  const element = document.getElementById("regElement").value;
-  const isAdmin = document.getElementById("isAdmin").checked;
-  const adminPass = document.getElementById("adminPassword").value;
+const username = document.getElementById("regUsername").value.trim();
+const password = document.getElementById("regPassword").value.trim();
+const element = document.getElementById("regElement").value;
+const isAdmin = document.getElementById("isAdmin").checked;
+const adminPass = document.getElementById("adminPassword").value;
 
-  if(!username||!password){ alert("Pseudo et mot de passe requis"); return; }
-  if(accounts[username]){ alert("Pseudo déjà pris"); return; }
-  if(isAdmin && adminPass!==ADMIN_PASSWORD){ alert("Mot de passe admin incorrect"); return; }
+if(!username||!password){ alert("Pseudo et mot de passe requis"); return; }
+if(isAdmin && adminPass!==ADMIN_PASSWORD){ alert("Mot de passe admin incorrect"); return; }
 
-  accounts[username] = {
-    username, password, element, level:1, rank:"Débutant",
-    ecus:0, stones:{}, spins:{normal:0,rare:0,epic:0,legendaire:0,mythique:0,prismatique:0}, isAdmin
-  };
-  saveAccounts();
-  loginUser(username);
+db.ref("accounts/"+username).get().then(snapshot=>{
+  if(snapshot.exists()){ alert("Pseudo déjà pris"); return; }
+  db.ref("accounts/"+username).set({
+    username,password,element,
+    level:1, rank:"Débutant",
+    ecus:0, stones:{},
+    spins:{normal:0,rare:0,epic:0,legendaire:0,mythique:0,prismatique:0},
+    isAdmin
+  }).then(()=> loginUser(username));
+});
 }
 
 function login(){
-  const username = document.getElementById("loginUsername").value.trim();
-  const password = document.getElementById("loginPassword").value.trim();
-  const user = accounts[username];
-  if(!user || user.password!==password){ alert("Identifiants incorrects"); return; }
+const username = document.getElementById("loginUsername").value.trim();
+const password = document.getElementById("loginPassword").value.trim();
+db.ref("accounts/"+username).get().then(snapshot=>{
+  if(!snapshot.exists() || snapshot.val().password!==password){ alert("Identifiants incorrects"); return; }
   loginUser(username);
+});
 }
 
 function loginUser(username){
-  currentUser = accounts[username];
-  localStorage.setItem("currentUser", JSON.stringify(currentUser));
-  document.getElementById("authContainer").classList.add("hidden");
-  if(currentUser.isAdmin){
-    document.getElementById("adminDashboard").classList.remove("hidden");
-    renderAdmin();
-  } else {
-    document.getElementById("userDashboard").classList.remove("hidden");
-    document.getElementById("welcome").innerText = `Bienvenue, ${currentUser.username}`;
-    renderUser();
-  }
+db.ref("accounts/"+username).get().then(snapshot=>{
+currentUser = snapshot.val();
+localStorage.setItem("currentUser", JSON.stringify(currentUser));
+document.getElementById("authContainer").classList.add("hidden");
+if(currentUser.isAdmin){
+document.getElementById("adminDashboard").classList.remove("hidden");
+renderAdmin();
+} else {
+document.getElementById("userDashboard").classList.remove("hidden");
+document.getElementById("welcome").innerText = `Bienvenue, ${currentUser.username}`;
+renderUser();
+}
+});
 }
 
 function logout(){
-  currentUser=null;
-  localStorage.removeItem("currentUser");
-  document.getElementById("authContainer").classList.remove("hidden");
-  document.getElementById("userDashboard").classList.add("hidden");
-  document.getElementById("adminDashboard").classList.add("hidden");
+currentUser=null;
+localStorage.removeItem("currentUser");
+document.getElementById("authContainer").classList.remove("hidden");
+document.getElementById("userDashboard").classList.add("hidden");
+document.getElementById("adminDashboard").classList.add("hidden");
 }
 
+// --- User Dashboard ---
 function renderUser(){
-  let spinsHtml="";
-  SPIN_TYPES.forEach(t=>{
-    spinsHtml+=`<div>${t}: ${currentUser.spins[t]||0} <button onclick="performSpin('${t}')"
-      class='btn btn-spin'>Spin</button></div>`;
-  });
-  document.getElementById("spinsContainer").innerHTML=spinsHtml;
+const spinsContainer = document.getElementById("spinsContainer");
+spinsContainer.innerHTML="";
+SPIN_TYPES.forEach(t=>{
+  const btn = document.createElement("button");
+  btn.className="btn btn-spin";
+  btn.innerText="Spin";
+  btn.onclick=()=> performSpin(t);
+  spinsContainer.innerHTML += `${t}: ${currentUser.spins[t]||0} `;
+  spinsContainer.appendChild(btn);
+  spinsContainer.innerHTML+="<br>";
+});
 
-  let stonesHtml="";
-  const stones = currentUser.stones;
-  for(const el in stones){
-    stonesHtml+=`${el}: ${stones[el]}<br>`;
-  }
-  document.getElementById("stonesContainer").innerHTML = stonesHtml;
-
-  // Trade options
-  let partnersHtml="<option value=''>Sélectionner un partenaire</option>";
-  for(const u in accounts){
-    if(u!==currentUser.username) partnersHtml+=`<option value='${u}'>${u}</option>`;
-  }
-  document.getElementById("tradePartner").innerHTML = partnersHtml;
-
-  let stonesOptions = "<option value=''>Sélectionner une pierre</option>";
-  for(const el in stones){
-    stonesOptions+=`<option value='${el}'>${el} (${stones[el]})</option>`;
-  }
-  document.getElementById("tradeStone").innerHTML = stonesOptions;
+const stonesContainer = document.getElementById("stonesContainer");
+stonesContainer.innerHTML="";
+for(const el in currentUser.stones){
+  stonesContainer.innerHTML+=`${el}: ${currentUser.stones[el]}<br>`;
 }
 
+// Trade partners
+const tradePartner = document.getElementById("tradePartner");
+tradePartner.innerHTML="<option value=''>Sélectionner un partenaire</option>";
+db.ref("accounts").get().then(snapshot=>{
+snapshot.forEach(s=>{
+const u = s.key;
+if(u!==currentUser.username){
+tradePartner.innerHTML += `<option value='${u}'>${u}</option>`;
+}
+});
+});
+const tradeStone = document.getElementById("tradeStone");
+tradeStone.innerHTML="<option value=''>Sélectionner une pierre</option>";
+for(const el in currentUser.stones){
+tradeStone.innerHTML+=`<option value='${el}'>${el} (${currentUser.stones[el]})</option>`;
+}
+}
+
+// --- Admin Dashboard ---
 function renderAdmin(){
-  let html="";
-  for(const u in accounts){
-    const p = accounts[u];
-    html+=`<div class='bordered'>
-      ${p.username} - Élément: ${p.element} - Niveau: ${p.level} - Rang: ${p.rank} - Écus: ${p.ecus}<br>
-      <select id="spinType-${u}">
-        <option value="normal">Normal</option>
-        <option value="rare">Rare</option>
-        <option value="epic">Epic</option>
-        <option value="legendaire">Légendaire</option>
-        <option value="mythique">Mythique</option>
-        <option value="prismatique">Prismatique</option>
-      </select>
-      <button onclick="grantSpin('${u}')" class="btn btn-spin">Ajouter Spin</button>
-      <button onclick="deletePlayer('${u}')" class="btn btn-admin">Supprimer</button>
-    </div>`;
-  }
-  document.getElementById("playersList").innerHTML=html;
-}
+const playersList = document.getElementById("playersList");
+playersList.innerHTML="";
+db.ref("accounts").get().then(snapshot=>{
+snapshot.forEach(s=>{
+const p = s.val();
+const u = s.key;
+let div = document.createElement("div");
+div.className="bordered";
+div.innerHTML=`${p.username} - Élément: ${p.element} - Niveau: ${p.level} - Rang: ${p.rank} - Écus: ${p.ecus}<br>`;
+const select = document.createElement("select");
+select.id=`spinType-${u}`;
+SPIN_TYPES.forEach(t=>{ select.innerHTML += `<option value='${t}'>${t}</option>`; });
+div.appendChild(select);
+const btnSpin = document.createElement("button");
+btnSpin.className="btn btn-spin";
+btnSpin.innerText="Ajouter Spin";
+btnSpin.onclick = ()=> grantSpin(u);
+div.appendChild(btnSpin);
+const btnDelete = document.createElement("button");
+btnDelete.className="btn btn-admin";
+btnDelete.innerText="Supprimer";
+btnDelete.onclick = ()=> deletePlayer(u);
+div.appendChild(btnDelete);
+playersList.appendChild(div);
+});
+});
 
+// On écoute les changements en temps réel pour mettre à jour automatiquement
+db.ref("accounts").on("value",()=>{ 
+if(currentUser){
+if(currentUser.isAdmin) renderAdmin(); else renderUser();
+}
+});
+
+// --- Spins et Trade ---
 function performSpin(type){
-  if(!currentUser.spins[type] || currentUser.spins[type]<=0){ alert("Pas de spins"); return; }
-  currentUser.spins[type]--;
-  const roll = Math.random();
-  if(roll<=SPIN_RATES[type]){
-    const el = ELEMENTS[Math.floor(Math.random()*ELEMENTS.length)];
-    currentUser.stones[el] = (currentUser.stones[el]||0)+1;
-    if(el===currentUser.element){
-      currentUser.level=Math.min(20,currentUser.level+1);
-      currentUser.rank=getRank(currentUser.level);
-    }
-    alert(`Tu as obtenu une pierre: ${el}`);
-  } else if(type!=="prismatique"){
-    currentUser.ecus += ECU_REWARDS[type]||0;
-    alert(`Tu as obtenu ${ECU_REWARDS[type]||0} écus`);
-  }
-  accounts[currentUser.username] = currentUser;
-  saveAccounts();
-  renderUser();
+if(!currentUser.spins[type]||currentUser.spins[type]<=0){ alert("Pas de spins"); return; }
+currentUser.spins[type]--;
+const roll = Math.random();
+if(roll<=SPIN_RATES[type]){
+const el = ELEMENTS[Math.floor(Math.random()*ELEMENTS.length)];
+currentUser.stones[el] = (currentUser.stones[el]||0)+1;
+if(el===currentUser.element){
+currentUser.level=Math.min(20,currentUser.level+1);
+currentUser.rank=getRank(currentUser.level);
+}
+alert(`Tu as obtenu une pierre: ${el}`);
+} else if(type!=="prismatique"){
+currentUser.ecus += ECU_REWARDS[type]||0;
+alert(`Tu as obtenu ${ECU_REWARDS[type]||0} écus`);
+}
+db.ref("accounts/"+currentUser.username).set(currentUser);
+renderUser();
 }
 
 function tradeStoneWith(){
-  const partnerName=document.getElementById("tradePartner").value;
-  const stoneName=document.getElementById("tradeStone").value;
-  if(!partnerName||!stoneName) return alert("Sélectionner partenaire et pierre");
-  const partner = accounts[partnerName];
-  if(!partner) return alert("Partenaire invalide");
-  if(!currentUser.stones[stoneName]||currentUser.stones[stoneName]<=0) return alert("Vous n'avez pas cette pierre");
-
-  currentUser.stones[stoneName]--;
-  if(currentUser.stones[stoneName]===0) delete currentUser.stones[stoneName];
-  partner.stones[stoneName] = (partner.stones[stoneName]||0)+1;
-  accounts[currentUser.username]=currentUser;
-  accounts[partnerName]=partner;
-  saveAccounts();
-  renderUser();
-  alert(`Échange effectué avec ${partnerName}: ${stoneName}`);
+const partnerName=document.getElementById("tradePartner").value;
+const stoneName=document.getElementById("tradeStone").value;
+if(!partnerName||!stoneName) return alert("Sélectionner partenaire et pierre");
+db.ref("accounts/"+partnerName).get().then(snapshot=>{
+const partner = snapshot.val();
+if(!partner) return alert("Partenaire invalide");
+if(!currentUser.stones[stoneName]||currentUser.stones[stoneName]<=0) return alert("Vous n'avez pas cette pierre");
+currentUser.stones[stoneName]--;
+if(currentUser.stones[stoneName]===0) delete currentUser.stones[stoneName];
+partner.stones[stoneName] = (partner.stones[stoneName]||0)+1;
+db.ref("accounts/"+currentUser.username).set(currentUser);
+db.ref("accounts/"+partnerName).set(partner);
+renderUser();
+alert(`Échange effectué avec ${partnerName}: ${stoneName}`);
+});
 }
 
 function grantSpin(username){
-  const select = document.getElementById(`spinType-${username}`);
-  const type = select.value;
-  accounts[username].spins[type] = (accounts[username].spins[type] || 0) + 1;
-  saveAccounts();
-  renderAdmin();
+const type = document.getElementById(`spinType-${username}`).value;
+db.ref("accounts/"+username).get().then(snapshot=>{
+let user = snapshot.val();
+user.spins[type] = (user.spins[type]||0)+1;
+db.ref("accounts/"+username).set(user);
+});
 }
 
 function deletePlayer(username){
-  if(!confirm(`Supprimer le compte ${username}?`)) return;
-  delete accounts[username];
-  saveAccounts();
-  renderAdmin();
+if(!confirm(`Supprimer le compte ${username}?`)) return;
+db.ref("accounts/"+username).remove();
 }
 </script>
-
 </body>
 </html>
